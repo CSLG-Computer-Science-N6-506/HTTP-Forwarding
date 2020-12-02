@@ -15,4 +15,19 @@
 那就用Cookies吧. 
 
 ## 实现
-就 Rust 好了, 随便弄一个 Web 框架应该就能转发的. 
+<del>就 Rust 好了, 随便弄一个 Web 框架应该就能转发的. </del>
+
+还是用了Python
+
+## 部署
+首先安装poetry python, 然后
+```shell
+poetry install
+poetry shell
+python ./src/main.py
+```
+
+## 下一步
+[ ] 手动销毁会话
+[ ] 清理掉部分Header的缓存功能
+[ ] 自动销毁超时会话

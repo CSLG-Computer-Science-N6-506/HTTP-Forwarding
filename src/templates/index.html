@@ -48,6 +48,7 @@
 
 
     </div>
+    <hr/>
 
     <h2>当前已有设备</h2>
     <div class="current-devices">
@@ -59,6 +60,15 @@
                 </div>
             </div>
     </div>
+    <hr/>
+    <h2>其他功能</h2>
+        <div class="card">
+            <div class="card-body">
+                取消当前浏览器会话
+                <button class="btn btn-outline-dark" @click="cancelSession()">取消会话</button>
+            </div>
+        </div>
+
 </div>
 
 <script>
@@ -78,6 +88,9 @@
                     console.log(res.data)
                     this.current_devices = res.data
                 })
+
+            },
+            cancelSession(){
 
             },
             addNew() {
@@ -103,7 +116,7 @@
                         port: device.port,
                     }
                 }).then(res => {
-                    console.log(res.data)
+                    console.log(res.data, "http://" + location.host)
                     window.open("http://" + location.host);
                 })
 
