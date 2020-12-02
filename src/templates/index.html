@@ -1,15 +1,121 @@
 <html lang="en">
-    <head>
-        <link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet">
-        <script src="{{ url_for('static', path='/vue@next.js') }}"></script>
+<head>
+    <link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet">
+    <script src="{{ url_for('static', path='/modules/vue/3.0.3/vue@next.js') }}"></script>
+    <script src="{{ url_for('static', path='/modules/axios/0.21.0/axios.min.js') }}"></script>
+    <!-- CSS only -->
+    <link rel="stylesheet" href="{{ url_for('static', path='/modules/bootstrap/4.5.0/bootstrap.min.css') }}"
+          crossorigin="anonymous">
 
-        <title>错误!</title>
-    </head>
+    <!-- JS, Popper.js, and jQuery -->
+    <script src="{{ url_for('static', path='/modules/jquery/3.5.1/jquery.slim.min.js') }}"
+            crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', path='/modules/popper/1.16.0/popper.min.js') }}"
+            crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', path='/modules/bootstrap/4.5.0/bootstrap.min.js') }}"
+            crossorigin="anonymous"></script>
+    <script type="text/javascript" src="{{ url_for('static', path='/modules/validator.tool/validator.min.js') }}"></script>
+
+    <title>506 转发系统</title>
+</head>
 <body>
-<div id="counter">
-  Counter: {{ counter }}
+<div id="counter" class="container">
+    <h1>未认证设备转发系统</h1>
+    <hr/>
+
+    <h2>手动添加设备</h2>
+    <div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">新设备地址</span>
+            </div>
+            <input type="text" class="form-control"
+                   placeholder="10.x.x.x" name="ip"
+                   aria-describedby="basic-addon1"
+                   v-model.trim="new_ip"
+            >
+        </div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">新设备端口</span>
+            </div>
+            <input type="number" class="form-control"
+                   placeholder="1-65535" name="port" max="65535" min="1"
+                   aria-describedby="basic-addon1"
+                   v-model.number="new_port">
+        </div>
+        <button class="btn btn-primary" @click="addNew">添加</button>
+
+
+    </div>
+
+    <h2>当前已有设备</h2>
+    <div class="current-devices">
+            <div class="card" v-for="device in Object.values(current_devices)">
+                <div class="current-device card-body">
+                    <h5 class="card-title">{{device.ip}}:{{device.port}}</h5>
+                    <p class="card-text">{{new Date(device.send_time).toLocaleString()}}</p>
+                    <button class="btn btn-outline-dark" @click="startSession(device)">Go somewhere</button>
+                </div>
+            </div>
+    </div>
 </div>
 
-<h1>{{ error }}</h1>
+<script>
+    var v = new Validator();
+
+    const Counter = {
+        data() {
+            return {
+                new_ip: '10.',
+                new_port: 80,
+                current_devices: {}
+            }
+        },
+        methods: {
+            refreshDevices() {
+                axios.get("/register/get").then(res => {
+                    console.log(res.data)
+                    this.current_devices = res.data
+                })
+
+            },
+            addNew() {
+                if (v.isIp(this.new_ip)) {
+                    axios.post("/register/set", {
+                        ip: this.new_ip,
+                        port: this.new_port,
+                        send_time: new Date()
+                    }).then(res => {
+                        console.log(res.data)
+                        this.refreshDevices()
+                        alert("请求成功")
+                    })
+                } else {
+                    alert('ip 格式不正确')
+                }
+            },
+            startSession(device) {
+                console.log(device)
+                axios.get("/start_new_session", {
+                    params: {
+                        ip: device.ip,
+                        port: device.port,
+                    }
+                }).then(res => {
+                    console.log(res.data)
+                    window.open("http://" + location.host);
+                })
+
+            }
+        },
+        created() {
+            this.refreshDevices()
+        }
+    }
+
+    Vue.createApp(Counter).mount('#counter')
+
+</script>
 </body>
 </html>

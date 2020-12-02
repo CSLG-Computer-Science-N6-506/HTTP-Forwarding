@@ -11,4 +11,3 @@ app.mount("/static", StaticFiles(directory="./src/static"), name="static")
 
 app.include_router(register_view, prefix='/register')
 app.include_router(session_manager_view)
-
