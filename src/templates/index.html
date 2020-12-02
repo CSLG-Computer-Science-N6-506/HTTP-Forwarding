@@ -1,0 +1,15 @@
+<html lang="en">
+    <head>
+        <link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet">
+        <script src="{{ url_for('static', path='/vue@next.js') }}"></script>
+
+        <title>错误!</title>
+    </head>
+<body>
+<div id="counter">
+  Counter: {{ counter }}
+</div>
+
+<h1>{{ error }}</h1>
+</body>
+</html>
